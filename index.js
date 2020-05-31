@@ -1,9 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors')
 const app = express();
 
 //  Route config
-const temperatures = require('./routes/api/temperatures');
+const sensors = require('./routes/api/sensors');
 
 // DB Config
 const db = require('./config/keys').mongoURI;
@@ -14,7 +15,7 @@ app.use(express.json());
 mongoose
   .connect(
     db,
-    { useNewUrlParser: true }
+    { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log('MongoDB Connected'))
   .catch((err) => console.log(err));
@@ -22,7 +23,7 @@ mongoose
 // Passport middleware
 
 // Passport Config
-
+app.use(cors())
 // Use Routes
 // Serve static assets if in production
 if (process.env.NODE_ENV === 'production') {
@@ -33,7 +34,7 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
 }
-app.use('/temperature', temperatures);
+app.use('/sensors', sensors);
 app.use(express.static('public'));
 
 const port = process.env.PORT || 1880;
